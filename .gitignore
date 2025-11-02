@@ -32,3 +32,16 @@ build/
 ### VS Code ###
 .vscode/
 /.trash/
+
+### Environment Variables ###
+.env
+.env.local
+.env.*.local
+!.env.example
+
+### Frontend Build (in static folder) ###
+src/main/resources/static/assets/
+src/main/resources/static/*.js
+src/main/resources/static/*.css
+src/main/resources/static/*.html
+!src/main/resources/static/README.md
