@@ -52,7 +52,7 @@ public class User {
     @JoinTable(name = "user_attending_events", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
     private List<Event> attendingEvents = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "staff", cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "user_staffing_events", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
     private List<Event> staffingEvents = new ArrayList<>();
 
