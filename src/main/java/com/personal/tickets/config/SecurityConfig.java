@@ -27,7 +27,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/public/**").permitAll()
-                .anyRequest().authenticated()
+                // Allow all static resources (frontend build)
+                .requestMatchers("/", "/index.html", "/assets/**", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/vite.svg", "/*.js", "/*.css", "/*.png", "/*.jpg", "/*.webp").permitAll()
+                // API endpoints require authentication
+                .requestMatchers("/api/**").authenticated()
+                // Everything else (SPA routes) is public - React Router will handle auth
+                .anyRequest().permitAll()
             )
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
             .addFilterAfter(userProvisioningFilter, BearerTokenAuthenticationFilter.class);
@@ -38,10 +43,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000")); // Frontend origin
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        config.setAllowedOrigins(List.of(
+            "http://localhost:5173", // Vite dev server (default port)
+            "http://localhost:3000", // Alternative frontend port
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:3000"
+        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
+        config.setExposedHeaders(List.of("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
